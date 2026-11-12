@@ -1,0 +1,19 @@
+# Local secrets and runtime state
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+node_modules/
+__pycache__/
+*.py[cod]
+*.log
+*.err
+prototype/chrome-qa/
+prototype/_qa/out/
+prototype/data/*
+!prototype/data/production-plan.json
+!prototype/data/trusted-public-origins.json
+*.private.*
+outputs/

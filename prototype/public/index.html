@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>变更智达——生产变更智能下发助手</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/workspace-pages.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">智达</span>变更智达</div>
+  <div class="product"><span class="hamburger">☰</span>生产变更智能下发助手</div>
+  <div class="top-right">
+    <button class="top-ai" id="top-ai" title="打开变更智达助手">AI<span class="dot"></span></button>
+    <span class="top-icon" title="刷新">⟳</span>
+    <div class="global-search" title="系统快捷导航">⌕<span>系统快捷导航</span></div>
+    <span class="top-icon">⛶</span><span class="top-icon">♧</span><span class="top-icon">ⓘ</span><span class="top-icon">▣</span>
+    <span class="user">● 生产管理员 ⌄</span>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <button class="nav-item workspace-nav" data-workspace-page="overview"><i>⌂</i>首页</button>
+  <a class="nav-item strong"><i>▱</i>文件管理<small>⌄</small></a>
+  <a class="nav-sub">图纸打印</a>
+  <a class="nav-item"><i>▧</i>技术文件<small>›</small></a>
+  <a class="nav-item strong"><i>▧</i>文件下发<small>⌄</small></a>
+  <button class="nav-sub nav-link active" data-page="receive">生产接收</button>
+  <a class="nav-sub">文件接收</a>
+  <a class="nav-item"><i>▤</i>采购管理<small>›</small></a>
+  <a class="nav-item"><i>▤</i>财务核算<small>›</small></a>
+  <a class="nav-item strong"><i>▥</i>卫华计划<small>⌄</small></a>
+  <button class="nav-sub nav-link" data-page="plan">生产作业计划</button>
+  <a class="nav-item strong"><i>♧</i>变更管理<small>⌄</small></a>
+  <button class="nav-sub nav-link" data-page="change">变更记录</button>
+  <a class="nav-sub">文件接收</a>
+  <button class="nav-sub workspace-nav" data-workspace-page="records">变更单报表</button>
+  <button class="nav-sub workspace-nav" data-workspace-page="reviews">审批记录</button>
+  <a class="nav-sub">变更通知单报表</a>
+  <a class="nav-sub">工时查询</a>
+  <a class="nav-sub">工时查询价格</a>
+  <a class="nav-sub">班组出差</a>
+  <a class="nav-sub">变更单报表(全部)</a>
+  <button class="nav-item workspace-nav" data-workspace-page="issues"><i>ⓘ</i>问题跟踪<small>›</small></button>
+  <a class="nav-item"><i>⬡</i>售后信息<small>›</small></a>
+</aside>
+
+<main class="main">
+  <div id="version-warning" class="version-warning hidden" role="alert">当前页面连接的是旧版服务，已暂停继续分析，请刷新页面后重试。</div>
+  <nav class="tabs">
+    <span class="tab-plain">首页</span>
+    <span class="tab-plain">文件接收</span>
+    <button class="tab active" data-page="receive">生产接收<b>×</b></button>
+    <button class="tab" data-page="change">变更记录<b>×</b></button>
+    <button class="tab" data-page="plan">生产作业计划<b>×</b></button>
+    <button class="tab workspace-tab hidden" type="button"></button>
+  </nav>
+
+  <section id="receive-page" class="page">
+    <div class="panel">
+      <div class="filters">
+        <div class="filter-row">
+          <label class="label-type">任务类型</label>
+          <div class="segmented type-toggle"><button>待处理</button><button class="on">已处理</button></div>
+          <label>类别</label><select disabled><option>请选择</option></select>
+          <label>类型</label><select disabled><option>请选择</option></select>
+          <label>状态</label><select disabled><option>请选择</option></select>
+          <label>下发时间</label><div class="date-field">▦ 开始日期 至 结束日期</div>
+        </div>
+        <div class="filter-row">
+          <label>关键字</label>
+          <input id="search-input" placeholder="请输入文件编号、订单号" class="w-260">
+          <button class="btn green" id="search">查询</button>
+          <button class="btn" id="reset-search">清空</button>
+          <span class="filter-note">按当前选中的销售订单处理</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn primary" id="preview-change-button">预览变更文件</button>
+        <button class="btn primary" id="preview-button">预览 AI 报告</button>
+        <button class="btn" disabled>下载预览图</button>
+        <button class="btn" disabled>下载源文件</button>
+        <button class="btn" disabled>接收</button>
+        <button class="btn" disabled>分配人员</button>
+        <button class="btn" disabled>分配人员组</button>
+        <div class="toolbar-spacer"></div>
+        <button class="btn" id="reset-demo" title="重置当前下发状态">重置状态</button>
+        <button class="btn ai-button" id="open-assistant"><span>✦</span> AI 智能分析</button>
+        <button class="icon-btn" id="refresh" title="刷新">⟳</button>
+        <button class="icon-btn" disabled>▤</button>
+        <button class="icon-btn" disabled>☷</button>
+        <button class="icon-btn" disabled>⊙</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="grid">
+          <thead><tr>
+            <th class="col-check">▣</th><th class="w-50">序号</th><th class="w-130">编号</th><th>文件名称</th>
+            <th class="w-200">产品类型</th><th class="w-60">类型</th><th class="w-100">设计员</th>
+            <th class="w-150">下发时间</th><th class="w-155">订单号</th><th class="w-100">客户</th><th class="w-90">处理状态</th>
+          </tr></thead>
+          <tbody id="records-body"></tbody>
+        </table>
+      </div>
+      <div class="table-foot"><span id="record-count">共 0 条</span><span class="pager">‹　<strong>1</strong>　›</span><span class="page-size">50 条/页</span></div>
+    </div>
+  </section>
+
+  <section id="plan-page" class="page hidden">
+    <div class="panel plan-panel">
+      <div class="plan-heading"><strong>生产作业计划</strong><span>按订单查询对应项目的班组与作业进度</span></div>
+      <div class="filters plan-filters">
+        <div class="plan-filter-line">
+          <label for="plan-keyword">关键字</label><input id="plan-keyword" placeholder="请输入合同号或销售订单号">
+          <button class="btn green" id="plan-search">查询</button>
+          <button class="btn" id="plan-reset">清空</button>
+        </div>
+        <div class="plan-filter-line plan-secondary">
+          <label>产品型号</label><select disabled><option>请选择</option></select>
+          <label>生成日计划</label><select disabled><option>请选择</option></select>
+          <label>状态</label><select disabled><option>全部</option></select>
+          <label>交货期</label><div class="date-field">▦ 开始日期　至　结束日期</div>
+        </div>
+      </div>
+      <div class="toolbar plan-toolbar">
+        <button class="btn primary" disabled>导入</button>
+        <button class="btn" disabled>批量操作</button><button class="btn" disabled>标记</button>
+        <button class="btn" disabled>生成日计划</button><button class="btn" disabled>问题反馈</button>
+        <button class="btn" disabled>查看反馈列表</button><button class="btn" disabled>生产进度导入</button>
+        <button class="btn" disabled>生产进度导出</button>
+        <span class="plan-source-note">作业计划资料仅用于查询核对</span>
+      </div>
+      <div class="table-wrap plan-table-wrap">
+        <table class="grid plan-table">
+          <thead><tr><th class="w-50">序号</th><th class="plan-contract">规格型号</th><th>梁盒班组</th><th>大车班组</th><th>大车进度</th><th>端梁进度</th><th>小车班组</th><th>小车进度</th><th>小车接线</th><th>电气班组</th><th>电气进度</th><th>主梁下料班组</th><th>端梁下料班组</th><th>车架下料班组</th><th>大车涂装班</th><th>小车涂装班</th><th>电气涂装班</th><th>计划交期</th><th>生产状态</th></tr></thead>
+          <tbody id="plan-body"><tr><td colspan="19" class="plan-empty">请输入订单号查询生产作业计划</td></tr></tbody>
+        </table>
+      </div>
+      <div class="table-foot"><span>共 <b id="plan-count">0</b> 条</span><span class="pager">‹　<strong>1</strong>　›</span><span class="page-size">50 条/页</span></div>
+    </div>
+  </section>
+
+  <section id="change-page" class="page hidden">
+    <div class="change-layout">
+      <div class="panel change-left">
+        <div class="filters compact">
+          <div class="filter-row">
+            <label class="label-type">任务类型</label><div class="segmented type-toggle"><button class="on">待处理</button><button>已处理</button></div>
+            <label>销售订单号</label><input id="order-filter">
+            <label>分配状态</label><select disabled><option>全部</option></select>
+          </div>
+          <div class="filter-row">
+            <label>仓库状态</label><select disabled><option>全部</option></select>
+            <label>质检状态</label><select disabled><option>全部</option></select>
+            <label>订单状态</label><select disabled><option>全部</option></select>
+          </div>
+          <div class="filter-row">
+            <label>文件编号</label><input id="file-filter">
+            <label>部件号</label><input disabled>
+            <label>客户</label><input disabled>
+          </div>
+          <div class="filter-row last">
+            <label>时间</label><div class="date-field">▦　开始日期 至 结束日期</div>
+            <div class="filter-actions"><button class="btn green" id="change-search">查询</button><button class="btn" id="change-reset">清空</button></div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn primary" id="change-preview">预览 AI 报告</button>
+          <button class="btn" disabled>修改部件</button>
+          <button class="btn" disabled>修改生产订单</button>
+          <button class="btn" disabled>读取SAP</button>
+          <button class="btn" disabled>分配人员</button>
+        </div>
+        <div class="table-wrap">
+          <table class="grid">
+            <thead><tr><th class="w-44">序号</th><th class="w-150">订单号</th><th>产品规格</th><th class="w-120">变更文件</th><th class="w-64">部件号</th><th class="w-64">大小类</th><th class="w-84">生产订单</th><th class="w-150">变更摘要</th></tr></thead>
+            <tbody id="change-record-body"></tbody>
+          </table>
+        </div>
+        <div class="table-foot"><span>共 <b id="change-count">0</b> 条</span><span class="pager">‹　<strong>1</strong>　›</span></div>
+      </div>
+
+      <div class="panel change-right">
+        <div class="right-head">
+          <span class="right-title">候选班组</span>
+          <span class="right-note" id="candidate-note">请选择订单并读取</span>
+        </div>
+        <div class="filters compact right-filter">
+          <div class="filter-row simple">
+            <label>班组名称</label><input id="team-filter" class="w-160">
+            <button class="btn green" id="team-search">查询</button>
+            <button class="btn" id="team-reset">清空</button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn primary" id="read-teams">↧ 读取</button>
+          <button class="btn" id="read-all">↧ 全部读取</button>
+          <button class="btn" id="dispatch">↧ 下发</button>
+          <button class="btn" disabled>↧ 移除</button>
+          <div class="toolbar-spacer"></div>
+          <button class="btn ai-button" id="open-assistant-2"><span>✦</span> AI</button>
+        </div>
+        <div class="table-wrap">
+          <table class="grid">
+            <thead><tr><th class="col-check"><input type="checkbox" id="select-all" aria-label="全选"></th><th>班组名称</th><th class="w-80">状态</th><th class="w-90">下发人</th><th class="w-140">下发时间</th><th class="w-80">接收人</th><th class="w-140">接收时间</th><th class="w-80">完成人</th></tr></thead>
+            <tbody id="teams-body"></tbody>
+          </table>
+        </div>
+        <div class="table-foot"><span>共 <b id="teams-count">0</b> 条</span><span class="pager">‹　<strong>1</strong>　›</span></div>
+      </div>
+    </div>
+  </section>
+  <div id="workspace-pages"></div>
+</main>
+
+<div class="drawer-shade hidden" id="drawer-shade"></div>
+<aside class="assistant hidden" id="assistant" aria-label="变更智达助手">
+  <header class="assistant-head">
+    <div class="assistant-title">
+      <div class="spark">✦</div>
+      <div><h1>变更智达</h1><p><span class="pulse"></span>承办分析与下发规划，你只做审批</p></div>
+    </div>
+    <div class="assistant-tools">
+      <button class="mini-btn" id="toggle-agent" title="显示/隐藏 AI 操作动画">操作动画：开</button>
+      <button id="close-assistant" class="close-btn" aria-label="关闭">×</button>
+    </div>
+  </header>
+
+  <div class="assistant-context">
+    <div class="context-main">
+      <div class="context-title" id="context-name">请选择变更文件</div>
+      <div class="context-meta">
+        <span>文件编号 <b id="context-file">—</b> <button type="button" class="copy-button" id="copy-context-file" aria-label="复制文件编号">复制</button></span>
+        <span>订单号 <b id="context-order">—</b> <button type="button" class="copy-button" id="copy-context-order" aria-label="复制订单号">复制</button></span>
+        <span>模型 <b id="model-status">检查中</b></span>
+      </div>
+    </div>
+    <div class="context-actions">
+      <button class="mini-btn" id="toggle-pdf">▤ AI 报告预览</button>
+      <button class="mini-btn" id="open-pdf">放大</button>
+    </div>
+    <div class="mini-pdf hidden" id="mini-pdf"><p>AI 分析结果，不包含人工勾选调整</p><iframe id="pdf-inline" title="AI 班组分析报告预览"></iframe></div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="steps" id="steps">
+      <div class="step active"><i>1</i><span>解析文件</span></div>
+      <div class="step"><i>2</i><span>分析规划</span></div>
+      <div class="step"><i>3</i><span>读取班组</span></div>
+      <div class="step"><i>4</i><span>人工审批</span></div>
+    </div>
+    <span class="progress-label" id="progress-label">等待开始</span>
+  </div>
+
+  <div class="assistant-stream" id="stream"></div>
+
+  <div class="composer">
+    <div class="quick-chips">
+      <button data-q="为什么这些班组不下发？">为什么不下发？</button>
+      <button data-q="每条建议的依据是什么？">依据是什么？</button>
+      <button data-q="这单还有哪些风险点？">风险点？</button>
+    </div>
+    <div class="composer-box">
+      <textarea id="chat-input" rows="2" placeholder="继续问，比如：演示涂装甲组为什么不下发？（Enter 发送，Shift+Enter 换行）"></textarea>
+      <button class="btn primary send" id="send-chat">发送</button>
+    </div>
+    <div class="composer-note">AI 已完成分析和班组勾选，下发必须由你审批。</div>
+  </div>
+</aside>
+
+<div class="modal hidden" id="pdf-modal">
+  <div class="modal-card pdf-card">
+    <div class="modal-head"><div><strong id="pdf-title">AI 班组分析报告</strong><p id="pdf-label">分析完成后可预览</p></div><button class="close-btn" data-close="pdf-modal">×</button></div>
+    <iframe id="pdf-frame" title="PDF 预览"></iframe>
+    <div class="pdf-empty hidden" id="pdf-empty">请先完成当前记录的 AI 分析。</div>
+  </div>
+</div>
+
+<div class="modal hidden" id="confirm-modal">
+  <div class="modal-card confirm-card">
+    <div class="modal-head"><div><strong>审批下发</strong><p>核对文件、订单与班组名单后确认</p></div><button class="close-btn" data-close="confirm-modal">×</button></div>
+    <div id="confirm-content" class="confirm-content"></div>
+    <div class="modal-actions"><button class="btn" data-close="confirm-modal">返回调整</button><button class="btn primary" id="confirm-dispatch">确认下发</button></div>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+<script src="/app.js" defer></script>
+<script src="/workspace-pages.js" defer></script>
+</body></html>
